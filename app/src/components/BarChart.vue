@@ -1,41 +1,35 @@
-<template>
-  <canvas ref="chartCanvas"></canvas>
-</template>
+<script setup>
+import { defineProps } from 'vue'
+import { Bar } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from 'chart.js'
 
-<script>
-import { onMounted, ref, watch } from 'vue'
-import Chart from 'chart.js/auto'
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-export default {
-  props: ['violations'],
-  setup(props) {
-    const chartCanvas = ref(null)
-    let chartInstance = null
-
-    const renderChart = () => {
-      if (chartInstance) {
-        chartInstance.destroy()
-      }
-
-      const counts = {}
-      props.violations.forEach((v) => {
-        counts[v.violation_description] = (counts[v.violation_description] || 0) + 1
-      })
-
-      const labels = Object.keys(counts)
-      const data = Object.values(counts)
-
-      chartInstance = new Chart(chartCanvas.value, {
-        type: 'bar',
-        data: { labels, datasets: [{ label: 'Violations', data, backgroundColor: 'blue' }] },
-      })
-    }
-
-    watch(() => props.violations, renderChart)
-
-    onMounted(renderChart)
-
-    return { chartCanvas }
-  },
-}
+const props = defineProps({
+  chartData: Object,
+})
 </script>
+
+<template>
+  <div>
+    <Bar
+      v-if="chartData"
+      :data="chartData"
+      :options="{
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Top 10 Parking Violations in NYC' },
+        },
+      }"
+    />
+  </div>
+</template>
