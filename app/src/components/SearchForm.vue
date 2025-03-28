@@ -1,19 +1,31 @@
 <template>
-  <input v-model="query" placeholder="Search by violation..." @input="emitSearch" />
+  <div>
+    <input
+      v-model="query"
+      placeholder="Search by violation..."
+      @input="emitSearch"
+      @keyup.enter="handleEnter"
+    />
+    <button @click="handleEnter">Search</button>
+  </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 export default {
   setup(_, { emit }) {
-    const query = ref('');
+    const query = ref('')
 
     const emitSearch = () => {
-      emit('search', query.value);
-    };
+      emit('search', query.value)
+    }
 
-    return { query, emitSearch };
+    const handleEnter = () => {
+      emitSearch()
+    }
+
+    return { query, emitSearch, handleEnter }
   },
-};
+}
 </script>
